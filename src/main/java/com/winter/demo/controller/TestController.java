@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -55,6 +56,23 @@ public class TestController {
         //进行验证，这里可以捕获异常，然后返回对应信息
         subject.login(usernamePasswordToken);
         return "login";
+    }
+    @RequestMapping(value="/ajaxLogin",method= RequestMethod.POST)
+    @ResponseBody
+    public Map<String,Object> submitLogin(@RequestBody Map map) {
+        Map<String, Object> resultMap = new LinkedHashMap<>();
+        try {
+
+            UsernamePasswordToken token = new UsernamePasswordToken( map.get("username").toString(), map.get("password").toString());
+            SecurityUtils.getSubject().login(token);
+            resultMap.put("status", 200);
+            resultMap.put("message", "登录成功");
+
+        } catch (Exception e) {
+            resultMap.put("status", 500);
+            resultMap.put("message", e.getMessage());
+        }
+        return resultMap;
     }
 
 }
